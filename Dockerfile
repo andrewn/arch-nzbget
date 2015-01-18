@@ -1,5 +1,8 @@
-FROM binhex/arch-base:2015010500
-MAINTAINER binhex
+# Based on binhex/arch-nzbget
+# Changed for Raspberry Pi
+
+FROM cellofellow/rpi-arch
+MAINTAINER andrewn
 
 # additional files
 ##################
@@ -8,14 +11,14 @@ MAINTAINER binhex
 ADD start.sh /home/nobody/start.sh
 
 # add supervisor conf file for app
-ADD nzbget.conf /etc/supervisor/conf.d/nzbget.conf
+#ADD nzbget.conf /etc/supervisor/conf.d/nzbget.conf
 
 # install app
 #############
 
 # install install app using pacman, set perms, cleanup
 RUN pacman -Sy --noconfirm && \
-	pacman -S nzbget --noconfirm && \
+	pacman -S gcc-libs nzbget --noconfirm && \
 	chown -R nobody:users /usr/bin/nzbget /usr/share/nzbget/nzbget.conf /home/nobody/start.sh && \
 	chmod -R 775 /usr/bin/nzbget /usr/share/nzbget/nzbget.conf /home/nobody/start.sh && \
 	yes|pacman -Scc && \	
@@ -43,4 +46,6 @@ EXPOSE 6789
 ################
 
 # run supervisor
-CMD ["supervisord", "-c", "/etc/supervisor.conf", "-n"]
+#CMD ["supervisord", "-c", "/etc/supervisor.conf", "-n"]
+
+CMD ["/home/nobody/start.sh"]
